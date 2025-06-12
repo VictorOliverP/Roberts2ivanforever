@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Você, Meu Girassol</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFF8E1;
+            color: #5D4037;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 1s;
+            background-image: radial-gradient(circle, #FFD54F 5%, transparent 5%), 
+                              radial-gradient(circle, #FFD54F 5%, transparent 5%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            overflow: hidden;
+        }
+        
+        .text-container {
+            max-width: 800px;
+            padding: 20px;
+            transition: opacity 1s, transform 1s;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #E65100;
+        }
+        
+        p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: left;
+            padding: 0 20px;
+        }
+        
+        #flower {
+            font-size: 3em;
+            animation: pulse 1.5s infinite;
+            margin-bottom: 20px;
+            color: #FFA000;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+        
+        #countdown {
+            font-weight: bold;
+            color: #E65100;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1em;
+        }
+        
+        #video-container {
+            position: absolute;
+            width: 80%;
+            max-width: 800px;
+            opacity: 0;
+            transition: opacity 1s;
+            display: flex;
+            justify-content: center;
+        }
+        
+        #video-player {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(230, 81, 0, 0.3);
+            object-fit: cover;
+        }
+        
+        .hide-text {
+            opacity: 0 !important;
+            transform: translateY(-50px) !important;
+        }
+        
+        .show-video {
+            opacity: 1 !important;
+            background-color: #FFECB3 !important;
+        }
+        
+        .highlight {
+            color: #E65100;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="text-container" id="text-content">
+        <div id="flower">🌻</div>
+        <h1>Para Você, Meu Girassol</h1>
+        
+        <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem. Os girassóis também são conhecidos como flores da alegria, e costuma-se dizer que quem vê um girassol imediatamente abre um sorriso diante da beleza dessa flor! Ver seu sorriso todos os dias reflete como a beleza da flor.</p>
+        
+        <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um! Então, sejamos como os girassóis: em dias bons, selecione o melhor desse mundo, valorize tudo que de bonito e bom haja nele e retenha isso dentro de você!</p>
+        
+        <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina todos os dias... que é <span class="highlight">você</span>!</p>
+        
+        <p id="countdown">O vídeo começará em 10 segundos...</p>
+    </div>
+    
+    <div id="video-container">
+        <!-- Vídeo local substituindo o iframe do YouTube -->
+        <video id="video-player" controls>
+            <source src="v.1.mp4" type="video/mp4">
+            Seu navegador não suporta vídeos HTML5.
+        </video>
+    </div>
+
+    <script>
+        // Contagem regressiva
+        let seconds = 10;
+        const countdownElement = document.getElementById('countdown');
+        
+        const countdownInterval = setInterval(function() {
+            seconds--;
+            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
+            
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+
+        // Transição após 10 segundos
+        setTimeout(function() {
+            // Esconde o texto com efeito
+            document.getElementById('text-content').classList.add('hide-text');
+            
+            // Mostra o vídeo
+            setTimeout(function() {
+                document.getElementById('video-container').classList.add('show-video');
+                document.body.classList.add('show-video');
+                
+                // Inicia o vídeo automaticamente
+                const videoPlayer = document.getElementById('video-player');
+                videoPlayer.play().catch(e => {
+                    // Caso o autoplay seja bloqueado, mostra os controles
+                    videoPlayer.controls = true;
+                });
+            }, 1000);
+        }, 10000);
+    </script>
+</body>
+</html>
