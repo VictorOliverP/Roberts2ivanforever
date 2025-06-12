@@ -16,20 +16,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background-color 1s;
             background-image: radial-gradient(circle, #FFD54F 5%, transparent 5%), 
                               radial-gradient(circle, #FFD54F 5%, transparent 5%);
             background-size: 30px 30px;
             background-position: 0 0, 15px 15px;
             overflow: hidden;
-            -webkit-user-select: none;
             user-select: none;
         }
         
         .text-container {
             max-width: 800px;
             padding: 20px;
-            transition: all 1s ease;
+            transition: all 0.5s ease;
             position: relative;
             z-index: 10;
         }
@@ -61,14 +59,6 @@
             100% { transform: scale(1); }
         }
         
-        #countdown {
-            font-weight: bold;
-            color: #E65100;
-            text-align: center;
-            margin-top: 30px;
-            font-size: 1.1em;
-        }
-        
         #video-container {
             position: fixed;
             top: 50%;
@@ -79,7 +69,7 @@
             max-width: 90vw;
             max-height: 90vh;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.5s ease;
             z-index: 5;
             background-color: #000;
             border-radius: 10px;
@@ -95,7 +85,6 @@
         
         .hide-text {
             opacity: 0;
-            transform: translateY(-50px);
             pointer-events: none;
         }
         
@@ -109,10 +98,10 @@
             font-weight: bold;
         }
 
-        /* Botão de Iniciar */
-        .start-button {
+        /* Botão de Ação Principal */
+        .action-button {
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             padding: 12px 24px;
@@ -124,22 +113,34 @@
             z-index: 20;
             font-size: 1.2em;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
         }
 
-        /* Ícone de som */
-        .sound-button {
+        .action-button:hover {
+            background-color: #F57C00;
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        /* Controles do Vídeo */
+        .video-controls {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.5);
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 20;
+        }
+
+        .control-button {
+            background: rgba(0,0,0,0.7);
             border: none;
             color: white;
             width: 40px;
             height: 40px;
             border-radius: 50%;
             cursor: pointer;
-            z-index: 30;
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1.2em;
@@ -151,9 +152,14 @@
                 height: calc(100vw * (1280/720));
             }
             
-            .start-button {
+            .action-button {
                 padding: 10px 20px;
                 font-size: 1.1em;
+                bottom: 20px;
+            }
+            
+            .video-controls {
+                bottom: 70px;
             }
         }
     </style>
@@ -168,173 +174,115 @@
         <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um! Então, sejamos como os girassóis: em dias bons, selecione o melhor desse mundo, valorize tudo que de bonito e bom haja nele e retenha isso dentro de você!</p>
         
         <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina todos os dias... que é <span class="highlight">você</span>!</p>
-        
-        <p id="countdown">O vídeo começará em 10 segundos...</p>
     </div>
     
     <div id="video-container">
-        <video id="video-player" playsinline webkit-playsinline preload="auto">
+        <video id="video-player" controls>
             <source src="v.1.mp4" type="video/mp4">
             Seu navegador não suporta vídeos HTML5.
         </video>
     </div>
 
-    <button class="start-button" id="start-button">Iniciar Vídeo</button>
-    <button class="sound-button" id="sound-button">🔊</button>
+    <button class="action-button" id="action-button">Mostrar Vídeo</button>
+    
+    <div class="video-controls" id="video-controls">
+        <button class="control-button" id="play-button">▶️</button>
+        <button class="control-button" id="mute-button">🔊</button>
+    </div>
 
     <script>
         // Elementos
         const textContent = document.getElementById('text-content');
         const videoContainer = document.getElementById('video-container');
         const videoPlayer = document.getElementById('video-player');
-        const countdownElement = document.getElementById('countdown');
-        const startButton = document.getElementById('start-button');
-        const soundButton = document.getElementById('sound-button');
+        const actionButton = document.getElementById('action-button');
+        const videoControls = document.getElementById('video-controls');
+        const playButton = document.getElementById('play-button');
+        const muteButton = document.getElementById('mute-button');
         
-        // Configuração inicial
-        let seconds = 10;
-        let isVideoPlaying = false;
-        let countdownInterval;
-        let videoTransition;
+        // Estado inicial
+        let isVideoShowing = false;
+        videoControls.style.display = 'none';
+        videoPlayer.controls = false; // Usaremos nossos próprios controles
 
-        // Verifica se o vídeo está carregando corretamente
+        // Verifica se o vídeo está disponível
         function checkVideo() {
             return new Promise((resolve, reject) => {
                 const videoSource = videoPlayer.querySelector('source').src;
                 fetch(videoSource)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Arquivo de vídeo não encontrado (status ${response.status})`);
-                        }
+                        if (!response.ok) throw new Error('Vídeo não encontrado');
                         return response.blob();
                     })
                     .then(blob => {
-                        if (blob.size === 0) {
-                            throw new Error("Arquivo de vídeo vazio ou inválido");
-                        }
+                        if (blob.size === 0) throw new Error('Vídeo inválido');
                         resolve();
                     })
                     .catch(error => {
-                        console.error("Erro ao carregar o vídeo:", error.message);
-                        countdownElement.textContent = "Vídeo não encontrado";
-                        startButton.style.display = 'none';
+                        console.error("Erro no vídeo:", error.message);
+                        actionButton.textContent = "Vídeo não disponível";
+                        actionButton.style.backgroundColor = "#9E9E9E";
+                        actionButton.disabled = true;
                         reject(error);
                     });
             });
         }
 
         // Inicialização
-        function init() {
-            checkVideo().then(() => {
-                startCountdown();
-            }).catch(() => {
-                // Para a execução se o vídeo não estiver disponível
-                countdownElement.textContent = "Erro ao carregar o vídeo";
-                startButton.style.display = 'none';
-            });
-        }
+        checkVideo().then(() => {
+            // Configura os ouvintes de evento após verificação bem-sucedida
+            setupEventListeners();
+        });
 
-        // Contagem regressiva
-        function startCountdown() {
-            countdownInterval = setInterval(() => {
-                seconds--;
-                countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
-                
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
-                    showVideo();
+        function setupEventListeners() {
+            // Botão principal de ação
+            actionButton.addEventListener('click', () => {
+                if (!isVideoShowing) {
+                    // Mostra o vídeo
+                    textContent.classList.add('hide-text');
+                    videoContainer.classList.add('show-video');
+                    videoControls.style.display = 'flex';
+                    actionButton.textContent = 'Voltar ao Texto';
+                    isVideoShowing = true;
+                } else {
+                    // Volta ao texto
+                    videoPlayer.pause();
+                    textContent.classList.remove('hide-text');
+                    videoContainer.classList.remove('show-video');
+                    videoControls.style.display = 'none';
+                    actionButton.textContent = 'Mostrar Vídeo';
+                    isVideoShowing = false;
                 }
-            }, 1000);
+            });
+
+            // Controle de play/pause
+            playButton.addEventListener('click', () => {
+                if (videoPlayer.paused) {
+                    videoPlayer.play();
+                    playButton.textContent = '⏸️';
+                } else {
+                    videoPlayer.pause();
+                    playButton.textContent = '▶️';
+                }
+            });
+
+            // Controle de mudo
+            muteButton.addEventListener('click', () => {
+                videoPlayer.muted = !videoPlayer.muted;
+                muteButton.textContent = videoPlayer.muted ? '🔇' : '🔊';
+            });
+
+            // Atualiza ícone do botão de play quando o vídeo termina
+            videoPlayer.addEventListener('ended', () => {
+                playButton.textContent = '▶️';
+            });
+
+            // Previne eventos de mouse desnecessários
+            document.addEventListener('mousedown', (e) => {
+                if (e.target.tagName === 'BUTTON') return;
+                e.preventDefault();
+            }, { passive: false });
         }
-
-        // Mostra o vídeo (sem autoplay)
-        function showVideo() {
-            textContent.classList.add('hide-text');
-            videoContainer.classList.add('show-video');
-            soundButton.style.display = 'flex';
-            startButton.textContent = 'Tocar Vídeo';
-            
-            // Configura o vídeo
-            videoPlayer.muted = false;
-            videoPlayer.controls = false;
-        }
-
-        // Inicia a reprodução do vídeo
-        function playVideo() {
-            const playPromise = videoPlayer.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    isVideoPlaying = true;
-                    startButton.textContent = 'Voltar ao Texto';
-                }).catch(error => {
-                    console.log("Reprodução bloqueada:", error);
-                    videoPlayer.controls = true;
-                });
-            }
-        }
-
-        // Botão principal
-        startButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            
-            if (!videoContainer.classList.contains('show-video')) {
-                // Pula a espera e mostra o vídeo imediatamente
-                clearInterval(countdownInterval);
-                showVideo();
-            } else if (!isVideoPlaying) {
-                // Inicia a reprodução após interação do usuário
-                playVideo();
-            } else {
-                // Volta ao texto
-                resetExperience();
-            }
-        });
-
-        // Controle de som
-        soundButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            videoPlayer.muted = !videoPlayer.muted;
-            soundButton.textContent = videoPlayer.muted ? '🔇' : '🔊';
-        });
-
-        // Click no vídeo - apenas pausa/play
-        videoContainer.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (isVideoPlaying) {
-                videoPlayer.pause();
-                isVideoPlaying = false;
-                startButton.textContent = 'Tocar Vídeo';
-            } else {
-                playVideo();
-            }
-        });
-
-        // Previne eventos de mouse desnecessários
-        document.addEventListener('mousedown', (e) => {
-            if (e.target === startButton || e.target === soundButton) return;
-            e.preventDefault();
-        }, { passive: false });
-
-        // Reinicia a experiência
-        function resetExperience() {
-            videoPlayer.pause();
-            videoPlayer.currentTime = 0;
-            videoContainer.classList.remove('show-video');
-            textContent.classList.remove('hide-text');
-            soundButton.style.display = 'none';
-            isVideoPlaying = false;
-            startButton.textContent = 'Iniciar Vídeo';
-            
-            // Reinicia a contagem
-            clearInterval(countdownInterval);
-            seconds = 10;
-            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
-            startCountdown();
-        }
-
-        // Inicia a aplicação
-        init();
     </script>
 </body>
 </html>
