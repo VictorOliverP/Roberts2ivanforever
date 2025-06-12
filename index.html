@@ -5,246 +5,213 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para Você, Meu Girassol</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --amarelo-girassol: #FFD700;
+            --amarelo-escuro: #FFA500;
+            --marrom-centro: #8B4513;
+            --verde-caule: #556B2F;
+            --bege-claro: #FFF8DC;
         }
         
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #000;
+            background-color: var(--bege-claro);
+            color: #5D4037;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            transition: background-color 1s;
             overflow: hidden;
         }
         
-        .tiktok-container {
+        .container {
             position: relative;
-            width: 720px;
-            height: 1280px;
-            background-color: #000;
-            overflow: hidden;
-            margin: auto;
-        }
-        
-        .video-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
+            max-width: 800px;
             height: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
         
-        #tiktok-video {
-            width: 720px;
-            height: 1280px;
-            object-fit: contain;
-            background-color: black;
+        .text-content {
+            max-width: 90%;
+            padding: 30px;
+            background: rgba(255, 248, 220, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+            transition: all 1s ease-in-out;
+            border: 2px solid var(--amarelo-girassol);
         }
         
-        .text-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 30px 20px;
-            color: white;
-            text-align: center;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            z-index: 10;
-            opacity: 1;
-            transition: opacity 0.5s;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--amarelo-escuro);
+            text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.3);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #5D4037;
+        }
+        
+        .highlight {
+            color: var(--amarelo-escuro);
+            font-weight: bold;
+        }
+        
+        #countdown {
             font-size: 1.1rem;
-            line-height: 1.6;
+            font-weight: bold;
+            color: var(--marrom-centro);
+            margin-top: 20px;
         }
         
-        .text-overlay h1 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: #FFD700;
-        }
-        
-        .text-overlay p {
-            margin-bottom: 12px;
-        }
-        
-        .controls {
+        #video-container {
             position: absolute;
-            right: 15px;
-            bottom: 180px;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            z-index: 10;
+            background-color: var(--bege-claro);
         }
         
-        .control-btn {
-            background: none;
-            border: none;
-            color: white;
-            margin: 15px 0;
-            font-size: 1.8rem;
-            cursor: pointer;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            opacity: 0.8;
-            transition: opacity 0.3s;
+        #video-player {
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(139, 69, 19, 0.3);
+            border: 3px solid var(--amarelo-girassol);
         }
         
-        .control-btn:hover {
-            opacity: 1;
-        }
-        
-        .hide {
-            opacity: 0 !important;
-        }
-        
-        .sunflower-icon {
+        .sunflower {
             position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
             font-size: 3rem;
-            color: #FFD700;
-            z-index: 10;
-            animation: pulse 2s infinite;
+            animation: spin 15s linear infinite, pulse 2s ease-in-out infinite alternate;
+            opacity: 0.7;
+            z-index: -1;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         @keyframes pulse {
-            0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.1); }
-            100% { transform: translateX(-50%) scale(1); }
+            from { transform: scale(0.9); }
+            to { transform: scale(1.1); }
         }
-
-        /* Responsividade */
-        @media (max-width: 720px) {
-            .tiktok-container {
-                width: 100vw;
-                height: calc(100vw * (1280/720));
-            }
-            
-            #tiktok-video {
-                width: 100%;
-                height: 100%;
-            }
-            
-            .text-overlay {
-                font-size: 1rem;
-                padding: 20px 15px;
-            }
-            
-            .text-overlay h1 {
-                font-size: 1.4rem;
-            }
+        
+        .hide {
+            opacity: 0;
+            transform: translateY(-50px);
         }
-
-        @media (max-height: 1280px) {
-            .tiktok-container {
-                height: 100vh;
-                width: calc(100vh * (720/1280));
-            }
+        
+        .show {
+            opacity: 1;
         }
+        
+        .sunflower-1 { top: 10%; left: 10%; color: var(--amarelo-girassol); }
+        .sunflower-2 { top: 10%; right: 10%; color: var(--amarelo-escuro); }
+        .sunflower-3 { bottom: 10%; left: 15%; color: var(--amarelo-girassol); }
+        .sunflower-4 { bottom: 10%; right: 15%; color: var(--amarelo-escuro); }
     </style>
 </head>
 <body>
-    <div class="tiktok-container">
-        <!-- Ícone de girassol animado -->
-        <div class="sunflower-icon">🌻</div>
+    <!-- Girassóis decorativos -->
+    <div class="sunflower sunflower-1">🌻</div>
+    <div class="sunflower sunflower-2">🌻</div>
+    <div class="sunflower sunflower-3">🌻</div>
+    <div class="sunflower sunflower-4">🌻</div>
+    
+    <div class="container">
+        <!-- Conteúdo de texto -->
+        <div class="text-content" id="text-content">
+            <h1>Para Você, Meu Girassol</h1>
+            
+            <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem.</p>
+            
+            <p>Os girassóis também são conhecidos como flores da alegria, e costuma-se dizer que quem vê um girassol imediatamente abre um sorriso diante da beleza dessa flor! Ver seu sorriso todos os dias reflete como a beleza da flor.</p>
+            
+            <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um!</p>
+            
+            <p>Então, sejamos como os girassóis: em dias bons, selecione o melhor desse mundo, valorize tudo que de bonito e bom haja nele e retenha isso dentro de você!</p>
+            
+            <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina todos os dias... que é <span class="highlight">você</span>!</p>
+            
+            <p id="countdown">O vídeo começará em 10 segundos...</p>
+        </div>
         
         <!-- Container do vídeo -->
-        <div class="video-wrapper">
-            <video id="tiktok-video" loop>
+        <div id="video-container">
+            <video id="video-player" controls>
                 <source src="v.1.mp4" type="video/mp4">
                 Seu navegador não suporta vídeos HTML5.
             </video>
-        </div>
-        
-        <!-- Overlay de texto completo -->
-        <div class="text-overlay" id="text-overlay">
-            <h1>Para Você, Meu Girassol</h1>
-            <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem.</p>
-            <p>Os girassóis também são conhecidos como flores da alegria, e costuma-se dizer que quem vê um girassol imediatamente abre um sorriso diante da beleza dessa flor! Ver seu sorriso todos os dias reflete como a beleza da flor.</p>
-            <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um!</p>
-            <p>Então, sejamos como os girassóis: em dias bons, selecione o melhor desse mundo, valorize tudo que de bonito e bom haja nele e retenha isso dentro de você!</p>
-            <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span style="color:#FFD700;font-weight:bold;">meu girassol favorito</span> que me ilumina todos os dias... que é <span style="color:#FFD700;font-weight:bold;">você</span>!</p>
-        </div>
-        
-        <!-- Controles -->
-        <div class="controls">
-            <button class="control-btn" id="play-btn">▶️</button>
-            <button class="control-btn" id="mute-btn">🔊</button>
         </div>
     </div>
 
     <script>
         // Elementos
-        const video = document.getElementById('tiktok-video');
-        const textOverlay = document.getElementById('text-overlay');
-        const playBtn = document.getElementById('play-btn');
-        const muteBtn = document.getElementById('mute-btn');
+        const textContent = document.getElementById('text-content');
+        const videoContainer = document.getElementById('video-container');
+        const videoPlayer = document.getElementById('video-player');
+        const countdownElement = document.getElementById('countdown');
         
-        // Configurações iniciais
-        video.muted = true; // Vídeo começa mudo (requisito do autoplay)
-        
-        // Inicia o vídeo automaticamente
-        video.play().then(() => {
-            // Esconde o texto após 8 segundos (tempo para ler)
-            setTimeout(() => {
-                textOverlay.classList.add('hide');
-            }, 8000);
-        }).catch(error => {
-            console.log("Autoplay não permitido:", error);
-            playBtn.style.display = 'block';
-        });
-        
-        // Controles
-        playBtn.addEventListener('click', () => {
-            if (video.paused) {
-                video.play();
-                playBtn.textContent = '⏸️';
-            } else {
-                video.pause();
-                playBtn.textContent = '▶️';
-            }
-        });
-        
-        muteBtn.addEventListener('click', () => {
-            video.muted = !video.muted;
-            muteBtn.textContent = video.muted ? '🔇' : '🔊';
-        });
-        
-        // Tocar na tela para mostrar/ocultar controles e texto
-        document.addEventListener('click', (e) => {
-            if (e.target === playBtn || e.target === muteBtn) return;
+        // Contagem regressiva
+        let seconds = 10;
+        const countdown = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
             
-            if (textOverlay.classList.contains('hide')) {
-                textOverlay.classList.remove('hide');
-                setTimeout(() => {
-                    textOverlay.classList.add('hide');
-                }, 8000); // 8 segundos para ler novamente
-            } else {
-                textOverlay.classList.add('hide');
+            if (seconds <= 0) {
+                clearInterval(countdown);
+            }
+        }, 1000);
+        
+        // Transição após 10 segundos
+        setTimeout(() => {
+            // Esconde o texto
+            textContent.classList.add('hide');
+            
+            // Mostra o vídeo após a transição do texto
+            setTimeout(() => {
+                videoContainer.classList.add('show');
+                videoPlayer.play().catch(e => {
+                    // Caso autoplay seja bloqueado, mostra controles
+                    videoPlayer.controls = true;
+                });
+                
+                // Muda o fundo para um tom mais quente
+                document.body.style.backgroundColor = '#FFF0C0';
+            }, 1000);
+        }, 10000);
+        
+        // Clique para mostrar controles ou voltar ao texto
+        document.addEventListener('click', () => {
+            if (videoContainer.classList.contains('show')) {
+                videoPlayer.pause();
+                videoContainer.classList.remove('show');
+                textContent.classList.remove('hide');
+                document.body.style.backgroundColor = 'var(--bege-claro)';
+                
+                // Reinicia contagem
+                seconds = 10;
+                countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
             }
         });
-
-        // Centraliza o container na tela
-        function centerContainer() {
-            const container = document.querySelector('.tiktok-container');
-            if (window.innerHeight < 1280) {
-                container.style.marginTop = '0';
-            } else {
-                const margin = (window.innerHeight - 1280) / 2;
-                container.style.marginTop = `${margin}px`;
-            }
-        }
-
-        window.addEventListener('load', centerContainer);
-        window.addEventListener('resize', centerContainer);
     </script>
 </body>
 </html>
