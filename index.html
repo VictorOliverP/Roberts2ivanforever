@@ -2,7 +2,6 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <!-- Responsive viewport for iPhone 16 and all modern mobiles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para o Meu Girassol</title>
     <style>
@@ -19,7 +18,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,7 +32,7 @@
         }
         
         .text-container {
-            max-width: 95vw;
+            max-width: 98vw;
             width: 100%;
             box-sizing: border-box;
             padding: 20px;
@@ -43,7 +42,7 @@
             background-color: rgba(255, 248, 220, 0.9);
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
-            margin: 0 5vw;
+            margin: 0 1vw;
         }
         
         h1 {
@@ -54,16 +53,16 @@
         }
         
         p {
-            font-size: 1.1em;
+            font-size: 1.2em;
             line-height: 1.8;
             margin-bottom: 25px;
             text-align: left;
-            padding: 0 10px;
+            padding: 0 20px;
             word-break: break-word;
         }
         
         #flower {
-            font-size: 2.5em;
+            font-size: 3em;
             animation: pulse 1.5s infinite;
             margin-bottom: 20px;
             color: #FFA000;
@@ -80,7 +79,7 @@
             color: #E65100;
             text-align: center;
             margin-top: 30px;
-            font-size: 1em;
+            font-size: 1.1em;
         }
         
         #video-container {
@@ -148,16 +147,27 @@
             opacity: 1;
         }
 
-        /* Responsividade para telas menores (iPhones, etc) */
-        @media (max-width: 600px) {
-            .text-container {
+        @media (max-width: 720px) {
+            #video-container {
+                width: 98vw;
+                height: 56vw;
                 max-width: 98vw;
+                max-height: 60vh;
+                border-radius: 6px;
+            }
+            .text-container {
                 margin: 0 1vw;
                 padding: 10px;
-                font-size: 1em;
+            }
+        }
+        @media (max-width: 500px) {
+            .text-container {
+                max-width: 100vw;
+                margin: 0;
+                padding: 5px;
             }
             h1 {
-                font-size: 1.5em;
+                font-size: 1.3em;
             }
             p {
                 font-size: 1em;
@@ -166,24 +176,9 @@
             #flower {
                 font-size: 2em;
             }
-            #video-container {
-                width: 98vw;
-                height: 56vw;
-                max-width: 98vw;
-                max-height: 60vh;
-                border-radius: 6px;
-            }
             .back-button {
                 font-size: 0.95em;
                 padding: 8px 14px;
-            }
-        }
-        @media (max-width: 400px) {
-            .text-container {
-                padding: 4px;
-            }
-            h1 {
-                font-size: 1.1em;
             }
         }
     </style>
@@ -193,11 +188,11 @@
         <div id="flower">🌻</div>
         <h1>Para Você, Meu Girassol</h1>
         
-        <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem. Os girassóis também são conhecidos como flores de esperança e felicidade.</p>
+        <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem. Os girassóis também são conhecidos como flores da alegria, e costuma-se dizer que quem vê um girassol imediatamente abre um sorriso diante da beleza dessa flor! Ver seu sorriso todos os dias reflete como a beleza da flor.</p>
         
-        <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um! Então, sejamos como os girassóis: em dias bons, selecione o melhor do sol. Nos dias nublados, sejamos o sol um para o outro.</p>
+        <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um! Então, sejamos como os girassóis: em dias bons, selecione o melhor desse mundo, valorize tudo que de bonito e bom haja nele e retenha isso dentro de você!</p>
         
-        <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina até nos dias cinzentos.</p>
+        <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina todos os dias... que é <span class="highlight">você</span>!</p>
         
         <p id="countdown">O vídeo começará em 25 segundos...</p>
     </div>
