@@ -17,41 +17,40 @@
             font-family: 'Arial', sans-serif;
             background-color: var(--bege-claro);
             color: #5D4037;
-            text-align: center;
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background-color 1s;
             overflow: hidden;
+            transition: background-color 1s;
         }
         
-        .container {
+        .main-container {
             position: relative;
             width: 100%;
-            max-width: 800px;
             height: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
         
-        .text-content {
+        .text-container {
+            width: 720px;
             max-width: 90%;
-            padding: 30px;
+            padding: 40px;
             background: rgba(255, 248, 220, 0.9);
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
-            transition: all 1s ease-in-out;
+            transition: all 1s ease;
             border: 2px solid var(--amarelo-girassol);
+            text-align: center;
         }
         
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: var(--amarelo-escuro);
             text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.3);
         }
@@ -61,6 +60,7 @@
             line-height: 1.8;
             margin-bottom: 20px;
             color: #5D4037;
+            text-align: left;
         }
         
         .highlight {
@@ -72,73 +72,86 @@
             font-size: 1.1rem;
             font-weight: bold;
             color: var(--marrom-centro);
-            margin-top: 20px;
+            margin-top: 25px;
+            text-align: center;
         }
         
         #video-container {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 720px;
+            height: 1280px;
+            max-width: 90vw;
+            max-height: 90vh;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.5s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: var(--bege-claro);
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
         }
         
         #video-player {
             width: 100%;
-            max-width: 800px;
-            max-height: 90vh;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(139, 69, 19, 0.3);
-            border: 3px solid var(--amarelo-girassol);
+            height: 100%;
+            object-fit: cover;
         }
         
-        .sunflower {
+        .sunflower-decoration {
             position: absolute;
             font-size: 3rem;
-            animation: spin 15s linear infinite, pulse 2s ease-in-out infinite alternate;
-            opacity: 0.7;
+            color: var(--amarelo-girassol);
+            opacity: 0.6;
             z-index: -1;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            animation: pulse 2s infinite alternate;
         }
         
         @keyframes pulse {
-            from { transform: scale(0.9); }
-            to { transform: scale(1.1); }
+            0% { transform: scale(0.9); }
+            100% { transform: scale(1.1); }
         }
+        
+        .decoration-1 { top: 10%; left: 10%; }
+        .decoration-2 { top: 10%; right: 10%; }
+        .decoration-3 { bottom: 10%; left: 15%; }
+        .decoration-4 { bottom: 10%; right: 15%; }
         
         .hide {
             opacity: 0;
             transform: translateY(-50px);
+            pointer-events: none;
         }
         
         .show {
             opacity: 1;
         }
         
-        .sunflower-1 { top: 10%; left: 10%; color: var(--amarelo-girassol); }
-        .sunflower-2 { top: 10%; right: 10%; color: var(--amarelo-escuro); }
-        .sunflower-3 { bottom: 10%; left: 15%; color: var(--amarelo-girassol); }
-        .sunflower-4 { bottom: 10%; right: 15%; color: var(--amarelo-escuro); }
+        @media (max-width: 768px) {
+            .text-container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Girassóis decorativos -->
-    <div class="sunflower sunflower-1">🌻</div>
-    <div class="sunflower sunflower-2">🌻</div>
-    <div class="sunflower sunflower-3">🌻</div>
-    <div class="sunflower sunflower-4">🌻</div>
+    <!-- Decorações de girassol -->
+    <div class="sunflower-decoration decoration-1">🌻</div>
+    <div class="sunflower-decoration decoration-2">🌻</div>
+    <div class="sunflower-decoration decoration-3">🌻</div>
+    <div class="sunflower-decoration decoration-4">🌻</div>
     
-    <div class="container">
-        <!-- Conteúdo de texto -->
-        <div class="text-content" id="text-content">
+    <div class="main-container">
+        <!-- Container de texto -->
+        <div class="text-container" id="text-content">
             <h1>Para Você, Meu Girassol</h1>
             
             <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem.</p>
@@ -156,7 +169,7 @@
         
         <!-- Container do vídeo -->
         <div id="video-container">
-            <video id="video-player" controls>
+            <video id="video-player" loop>
                 <source src="v.1.mp4" type="video/mp4">
                 Seu navegador não suporta vídeos HTML5.
             </video>
@@ -170,14 +183,17 @@
         const videoPlayer = document.getElementById('video-player');
         const countdownElement = document.getElementById('countdown');
         
+        // Configuração inicial do vídeo (desmutado)
+        videoPlayer.muted = false;
+        
         // Contagem regressiva
         let seconds = 10;
-        const countdown = setInterval(() => {
+        const countdownInterval = setInterval(() => {
             seconds--;
             countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
             
             if (seconds <= 0) {
-                clearInterval(countdown);
+                clearInterval(countdownInterval);
             }
         }, 1000);
         
@@ -186,28 +202,27 @@
             // Esconde o texto
             textContent.classList.add('hide');
             
-            // Mostra o vídeo após a transição do texto
+            // Mostra o vídeo
             setTimeout(() => {
                 videoContainer.classList.add('show');
-                videoPlayer.play().catch(e => {
-                    // Caso autoplay seja bloqueado, mostra controles
-                    videoPlayer.controls = true;
+                videoPlayer.play().catch(error => {
+                    console.log("Erro ao reproduzir vídeo:", error);
                 });
                 
-                // Muda o fundo para um tom mais quente
-                document.body.style.backgroundColor = '#FFF0C0';
+                // Muda o fundo para preto durante o vídeo
+                document.body.style.backgroundColor = '#000';
             }, 1000);
         }, 10000);
         
-        // Clique para mostrar controles ou voltar ao texto
-        document.addEventListener('click', () => {
+        // Clique para voltar ao texto (pausa o vídeo)
+        document.addEventListener('click', (e) => {
             if (videoContainer.classList.contains('show')) {
                 videoPlayer.pause();
                 videoContainer.classList.remove('show');
                 textContent.classList.remove('hide');
                 document.body.style.backgroundColor = 'var(--bege-claro)';
                 
-                // Reinicia contagem
+                // Reinicia a contagem
                 seconds = 10;
                 countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
             }
