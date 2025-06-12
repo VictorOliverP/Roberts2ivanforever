@@ -2,9 +2,16 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <!-- Responsive viewport for iPhone 16 and all modern mobiles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para o Meu Girassol</title>
     <style>
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
         body {
             font-family: 'Arial', sans-serif;
             background-color: #FFF8E1;
@@ -12,7 +19,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -26,7 +33,9 @@
         }
         
         .text-container {
-            max-width: 800px;
+            max-width: 95vw;
+            width: 100%;
+            box-sizing: border-box;
             padding: 20px;
             transition: opacity 1s, transform 1s;
             position: relative;
@@ -34,24 +43,27 @@
             background-color: rgba(255, 248, 220, 0.9);
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+            margin: 0 5vw;
         }
         
         h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 20px;
             color: #E65100;
+            word-break: break-word;
         }
         
         p {
-            font-size: 1.2em;
+            font-size: 1.1em;
             line-height: 1.8;
             margin-bottom: 25px;
             text-align: left;
-            padding: 0 20px;
+            padding: 0 10px;
+            word-break: break-word;
         }
         
         #flower {
-            font-size: 3em;
+            font-size: 2.5em;
             animation: pulse 1.5s infinite;
             margin-bottom: 20px;
             color: #FFA000;
@@ -68,7 +80,7 @@
             color: #E65100;
             text-align: center;
             margin-top: 30px;
-            font-size: 1.1em;
+            font-size: 1em;
         }
         
         #video-container {
@@ -76,9 +88,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 720px;
-            height: 1280px;
-            max-width: 90vw;
+            width: 90vw;
+            height: 56vw;
+            max-width: 560px;
             max-height: 90vh;
             opacity: 0;
             transition: opacity 1s;
@@ -86,6 +98,9 @@
             background-color: #000;
             border-radius: 10px;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #video-player {
@@ -124,21 +139,51 @@
             z-index: 30;
             opacity: 0;
             transition: opacity 0.3s;
+            font-size: 1em;
+            max-width: 90vw;
+            white-space: nowrap;
         }
         
         .show-back-button {
             opacity: 1;
         }
 
-        @media (max-width: 720px) {
-            #video-container {
-                width: 100vw;
-                height: calc(100vw * (1280/720));
-            }
-            
+        /* Responsividade para telas menores (iPhones, etc) */
+        @media (max-width: 600px) {
             .text-container {
-                margin: 0 15px;
-                padding: 15px;
+                max-width: 98vw;
+                margin: 0 1vw;
+                padding: 10px;
+                font-size: 1em;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            p {
+                font-size: 1em;
+                padding: 0 2vw;
+            }
+            #flower {
+                font-size: 2em;
+            }
+            #video-container {
+                width: 98vw;
+                height: 56vw;
+                max-width: 98vw;
+                max-height: 60vh;
+                border-radius: 6px;
+            }
+            .back-button {
+                font-size: 0.95em;
+                padding: 8px 14px;
+            }
+        }
+        @media (max-width: 400px) {
+            .text-container {
+                padding: 4px;
+            }
+            h1 {
+                font-size: 1.1em;
             }
         }
     </style>
@@ -148,11 +193,11 @@
         <div id="flower">🌻</div>
         <h1>Para Você, Meu Girassol</h1>
         
-        <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem. Os girassóis também são conhecidos como flores da alegria, e costuma-se dizer que quem vê um girassol imediatamente abre um sorriso diante da beleza dessa flor! Ver seu sorriso todos os dias reflete como a beleza da flor.</p>
+        <p>Sabe porque eu escolhi essa flor? O girassol se volta para onde o sol estiver, mesmo que o sol esteja escondido atrás de uma nuvem. Os girassóis também são conhecidos como flores de esperança e felicidade.</p>
         
-        <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um! Então, sejamos como os girassóis: em dias bons, selecione o melhor desse mundo, valorize tudo que de bonito e bom haja nele e retenha isso dentro de você!</p>
+        <p>Mas você sabe o que os girassóis fazem em dias nublados? Eles viram uns para os outros buscando a energia em cada um! Então, sejamos como os girassóis: em dias bons, selecione o melhor do sol. Nos dias nublados, sejamos o sol um para o outro.</p>
         
-        <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina todos os dias... que é <span class="highlight">você</span>!</p>
+        <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina até nos dias cinzentos.</p>
         
         <p id="countdown">O vídeo começará em 25 segundos...</p>
     </div>
