@@ -86,7 +86,6 @@
             background-color: #000;
             border-radius: 10px;
             overflow: hidden;
-            pointer-events: none;
         }
         
         #video-player {
@@ -98,11 +97,11 @@
         .hide-text {
             opacity: 0 !important;
             transform: translateY(-50px) !important;
+            pointer-events: none;
         }
         
         .show-video {
             opacity: 1 !important;
-            pointer-events: auto;
         }
         
         .highlight {
@@ -176,7 +175,7 @@
         const backButton = document.getElementById('back-button');
         
         // Configuração inicial
-        let seconds = 25; // Alterado para 25 segundos
+        let seconds = 25;
         
         // Contagem regressiva
         const countdownInterval = setInterval(() => {
@@ -188,7 +187,7 @@
             }
         }, 1000);
 
-        // Transição após 25 segundos (25000 milissegundos)
+        // Transição após 25 segundos
         setTimeout(() => {
             // Esconde o texto
             textContent.classList.add('hide-text');
@@ -201,7 +200,7 @@
             videoPlayer.play().catch(error => {
                 console.log("Reprodução automática bloqueada:", error);
             });
-        }, 25000); // Alterado para 25 segundos (25000 ms)
+        }, 25000);
 
         // Botão para voltar ao texto
         backButton.addEventListener('click', () => {
@@ -211,8 +210,13 @@
             backButton.classList.remove('show-back-button');
             
             // Reinicia a contagem
-            seconds = 25; // Reinicia com 25 segundos
+            seconds = 25;
             countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
+        });
+
+        // Permite interação com o vídeo quando visível
+        videoContainer.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita que o clique se propague
         });
     </script>
 </body>
