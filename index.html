@@ -94,7 +94,6 @@
         
         .show-video {
             opacity: 1 !important;
-            background-color: #FFECB3 !important;
         }
         
         .highlight {
@@ -102,7 +101,7 @@
             font-weight: bold;
         }
 
-        /* Responsividade para manter proporção */
+        /* Responsividade */
         @media (max-width: 720px) {
             #video-container {
                 width: 100vw;
@@ -133,19 +132,26 @@
     </div>
     
     <div id="video-container">
-        <!-- Substitua pelo caminho correto do seu vídeo -->
-        <video id="video-player" autoplay muted loop>
-            <source src="v.1.mp4" type="video/mp4">
+        <!-- Usando caminho relativo para o vídeo -->
+        <video id="video-player" playsinline>
+            <source src="./v.1.mp4" type="video/mp4">
             Seu navegador não suporta vídeos HTML5.
         </video>
     </div>
 
     <script>
-        // Contagem regressiva
-        let seconds = 10;
+        // Elementos
+        const textContent = document.getElementById('text-content');
+        const videoContainer = document.getElementById('video-container');
+        const videoPlayer = document.getElementById('video-player');
         const countdownElement = document.getElementById('countdown');
         
-        const countdownInterval = setInterval(function() {
+        // Configuração inicial
+        let seconds = 10;
+        videoPlayer.muted = true; // Começa mudo para permitir autoplay
+        
+        // Contagem regressiva
+        const countdownInterval = setInterval(() => {
             seconds--;
             countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
             
@@ -155,30 +161,33 @@
         }, 1000);
 
         // Transição após 10 segundos
-        setTimeout(function() {
-            // Esconde o texto com efeito
-            document.getElementById('text-content').classList.add('hide-text');
+        setTimeout(() => {
+            // Esconde o texto
+            textContent.classList.add('hide-text');
             
-            // Mostra o vídeo
-            setTimeout(function() {
-                const videoPlayer = document.getElementById('video-player');
-                document.getElementById('video-container').classList.add('show-video');
-                document.body.classList.add('show-video');
+            // Mostra e reproduz o vídeo
+            setTimeout(() => {
+                videoContainer.classList.add('show-video');
                 
-                // Tenta desmutar o vídeo (pode não funcionar em todos navegadores)
-                videoPlayer.muted = false;
-                videoPlayer.play().catch(e => {
-                    console.log("Autoplay não permitido:", e);
-                });
+                // Tenta reproduzir o vídeo
+                const playPromise = videoPlayer.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        // Fallback para interação do usuário
+                        videoPlayer.controls = true;
+                        console.log("Autoplay bloqueado:", error);
+                    });
+                }
             }, 1000);
         }, 10000);
 
         // Clique para voltar ao texto
-        document.addEventListener('click', function(e) {
-            if (document.getElementById('video-container').classList.contains('show-video')) {
-                document.getElementById('video-container').classList.remove('show-video');
-                document.getElementById('text-content').classList.remove('hide-text');
-                document.body.classList.remove('show-video');
+        document.addEventListener('click', (e) => {
+            if (videoContainer.classList.contains('show-video')) {
+                videoPlayer.pause();
+                videoContainer.classList.remove('show-video');
+                textContent.classList.remove('hide-text');
                 
                 // Reinicia a contagem
                 seconds = 10;
