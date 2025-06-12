@@ -142,7 +142,7 @@
             border-radius: 50%;
             cursor: pointer;
             z-index: 30;
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             font-size: 1.2em;
@@ -176,6 +176,7 @@
     </div>
     
     <div id="video-container">
+        <!-- Certifique-se que o arquivo v.1.mp4 está na mesma pasta -->
         <video id="video-player" playsinline webkit-playsinline>
             <source src="v.1.mp4" type="video/mp4">
             Seu navegador não suporta vídeos HTML5.
@@ -198,6 +199,15 @@
         let seconds = 10;
         let isVideoPlaying = false;
         
+        // Verifica se o vídeo está carregando corretamente
+        videoPlayer.addEventListener('error', function() {
+            console.error("Erro ao carregar o vídeo. Verifique:");
+            console.log("1. Se o arquivo v.1.mp4 está na mesma pasta");
+            console.log("2. Se o nome do arquivo está correto (incluindo a extensão .mp4)");
+            console.log("3. Se o vídeo tem um formato compatível (MP4 com H.264)");
+            alert("Erro ao carregar o vídeo. Verifique o console para detalhes.");
+        });
+
         // Contagem regressiva
         const countdownInterval = setInterval(() => {
             seconds--;
@@ -213,7 +223,7 @@
             // Esconde o texto
             textContent.classList.add('hide-text');
             
-            // Mostra o vídeo e o botão de voltar
+            // Mostra o vídeo e os controles
             videoContainer.classList.add('show-video');
             backButton.classList.add('show-back-button');
             soundButton.style.display = 'flex';
@@ -236,7 +246,7 @@
         };
 
         // Transição após 10 segundos
-        setTimeout(startVideo, 10000);
+        const videoTransition = setTimeout(startVideo, 10000);
 
         // Botão para voltar ao texto
         backButton.addEventListener('click', (e) => {
@@ -250,8 +260,10 @@
             isVideoPlaying = false;
             
             // Reinicia a contagem
+            clearInterval(countdownInterval);
             seconds = 10;
             countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
+            setTimeout(startVideo, 10000);
         });
 
         // Controle de som
