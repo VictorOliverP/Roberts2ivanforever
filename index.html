@@ -27,7 +27,9 @@
         .text-container {
             max-width: 800px;
             padding: 20px;
-            transition: opacity 1s, transform 1s;
+            transition: all 1s ease;
+            position: relative;
+            z-index: 10;
         }
         
         h1 {
@@ -66,19 +68,21 @@
         }
         
         #video-container {
-            position: absolute;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 720px;
             height: 1280px;
             max-width: 90vw;
             max-height: 90vh;
             opacity: 0;
-            transition: opacity 1s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            transition: opacity 1s ease;
+            z-index: 5;
             background-color: #000;
             border-radius: 10px;
             overflow: hidden;
+            pointer-events: none;
         }
         
         #video-player {
@@ -88,12 +92,14 @@
         }
         
         .hide-text {
-            opacity: 0 !important;
-            transform: translateY(-50px) !important;
+            opacity: 0;
+            transform: translateY(-50px);
+            pointer-events: none;
         }
         
         .show-video {
-            opacity: 1 !important;
+            opacity: 1;
+            pointer-events: auto;
         }
         
         .highlight {
@@ -101,18 +107,31 @@
             font-weight: bold;
         }
 
-        /* Responsividade */
+        /* Botão de retorno */
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #E65100;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .show-back-button {
+            opacity: 1;
+        }
+
         @media (max-width: 720px) {
             #video-container {
                 width: 100vw;
                 height: calc(100vw * (1280/720));
-            }
-        }
-
-        @media (max-height: 1280px) {
-            #video-container {
-                height: 100vh;
-                width: calc(100vh * (720/1280));
             }
         }
     </style>
@@ -132,12 +151,13 @@
     </div>
     
     <div id="video-container">
-        <!-- Usando caminho relativo para o vídeo -->
-        <video id="video-player" playsinline>
+        <video id="video-player" playsinline webkit-playsinline>
             <source src="./v.1.mp4" type="video/mp4">
             Seu navegador não suporta vídeos HTML5.
         </video>
     </div>
+
+    <button class="back-button" id="back-button">Voltar ao Texto</button>
 
     <script>
         // Elementos
@@ -145,10 +165,11 @@
         const videoContainer = document.getElementById('video-container');
         const videoPlayer = document.getElementById('video-player');
         const countdownElement = document.getElementById('countdown');
+        const backButton = document.getElementById('back-button');
         
         // Configuração inicial
         let seconds = 10;
-        videoPlayer.muted = true; // Começa mudo para permitir autoplay
+        videoPlayer.muted = false; // Áudio habilitado
         
         // Contagem regressiva
         const countdownInterval = setInterval(() => {
@@ -165,34 +186,33 @@
             // Esconde o texto
             textContent.classList.add('hide-text');
             
-            // Mostra e reproduz o vídeo
-            setTimeout(() => {
-                videoContainer.classList.add('show-video');
-                
-                // Tenta reproduzir o vídeo
-                const playPromise = videoPlayer.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        // Fallback para interação do usuário
-                        videoPlayer.controls = true;
-                        console.log("Autoplay bloqueado:", error);
-                    });
-                }
-            }, 1000);
+            // Mostra o vídeo e o botão de voltar
+            videoContainer.classList.add('show-video');
+            backButton.classList.add('show-back-button');
+            
+            // Tenta reproduzir o vídeo
+            const playPromise = videoPlayer.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Mostra controles se autoplay falhar
+                    videoPlayer.controls = true;
+                    console.log("Autoplay bloqueado:", error);
+                });
+            }
         }, 10000);
 
-        // Clique para voltar ao texto
-        document.addEventListener('click', (e) => {
-            if (videoContainer.classList.contains('show-video')) {
-                videoPlayer.pause();
-                videoContainer.classList.remove('show-video');
-                textContent.classList.remove('hide-text');
-                
-                // Reinicia a contagem
-                seconds = 10;
-                countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
-            }
+        // Botão para voltar ao texto
+        backButton.addEventListener('click', () => {
+            videoPlayer.pause();
+            videoPlayer.currentTime = 0;
+            videoContainer.classList.remove('show-video');
+            textContent.classList.remove('hide-text');
+            backButton.classList.remove('show-back-button');
+            
+            // Reinicia a contagem
+            seconds = 10;
+            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
         });
     </script>
 </body>
