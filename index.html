@@ -122,16 +122,41 @@
             z-index: 20;
             opacity: 0;
             transition: opacity 0.3s;
+            font-size: 1.1em;
         }
         
         .show-back-button {
             opacity: 1;
         }
 
+        /* Ícone de som */
+        .sound-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 30;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+        }
+
         @media (max-width: 720px) {
             #video-container {
                 width: 100vw;
                 height: calc(100vw * (1280/720));
+            }
+            
+            .back-button {
+                bottom: 10px;
+                padding: 8px 16px;
             }
         }
     </style>
@@ -158,6 +183,7 @@
     </div>
 
     <button class="back-button" id="back-button">Voltar ao Texto</button>
+    <button class="sound-button" id="sound-button">🔊</button>
 
     <script>
         // Elementos
@@ -166,10 +192,11 @@
         const videoPlayer = document.getElementById('video-player');
         const countdownElement = document.getElementById('countdown');
         const backButton = document.getElementById('back-button');
+        const soundButton = document.getElementById('sound-button');
         
         // Configuração inicial
         let seconds = 10;
-        videoPlayer.muted = false; // Áudio habilitado
+        let isVideoPlaying = false;
         
         // Contagem regressiva
         const countdownInterval = setInterval(() => {
@@ -181,38 +208,70 @@
             }
         }, 1000);
 
-        // Transição após 10 segundos
-        setTimeout(() => {
+        // Função para iniciar vídeo
+        const startVideo = () => {
             // Esconde o texto
             textContent.classList.add('hide-text');
             
             // Mostra o vídeo e o botão de voltar
             videoContainer.classList.add('show-video');
             backButton.classList.add('show-back-button');
+            soundButton.style.display = 'flex';
+            
+            // Configura o vídeo
+            videoPlayer.muted = false;
+            videoPlayer.controls = false;
             
             // Tenta reproduzir o vídeo
             const playPromise = videoPlayer.play();
             
             if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    // Mostra controles se autoplay falhar
-                    videoPlayer.controls = true;
+                playPromise.then(() => {
+                    isVideoPlaying = true;
+                }).catch(error => {
                     console.log("Autoplay bloqueado:", error);
+                    videoPlayer.controls = true;
                 });
             }
-        }, 10000);
+        };
+
+        // Transição após 10 segundos
+        setTimeout(startVideo, 10000);
 
         // Botão para voltar ao texto
-        backButton.addEventListener('click', () => {
+        backButton.addEventListener('click', (e) => {
+            e.stopPropagation();
             videoPlayer.pause();
             videoPlayer.currentTime = 0;
             videoContainer.classList.remove('show-video');
             textContent.classList.remove('hide-text');
             backButton.classList.remove('show-back-button');
+            soundButton.style.display = 'none';
+            isVideoPlaying = false;
             
             // Reinicia a contagem
             seconds = 10;
             countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
+        });
+
+        // Controle de som
+        soundButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            videoPlayer.muted = !videoPlayer.muted;
+            soundButton.textContent = videoPlayer.muted ? '🔇' : '🔊';
+        });
+
+        // Click no vídeo - apenas pausa/play
+        videoContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isVideoPlaying) {
+                videoPlayer.pause();
+                isVideoPlaying = false;
+            } else {
+                videoPlayer.play().then(() => {
+                    isVideoPlaying = true;
+                });
+            }
         });
     </script>
 </body>
