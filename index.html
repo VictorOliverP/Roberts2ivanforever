@@ -82,7 +82,7 @@
             max-height: 90vh;
             opacity: 0;
             transition: opacity 1s;
-            z-index: 20; /* Valor maior que o texto */
+            z-index: 20;
             background-color: #000;
             border-radius: 10px;
             overflow: hidden;
@@ -102,7 +102,7 @@
         
         .show-video {
             opacity: 1 !important;
-            pointer-events: auto; /* Permite interação com o vídeo */
+            pointer-events: auto;
         }
         
         .highlight {
@@ -122,7 +122,7 @@
             border: none;
             border-radius: 20px;
             cursor: pointer;
-            z-index: 30; /* Acima do vídeo */
+            z-index: 30;
             opacity: 0;
             transition: opacity 0.3s;
         }
@@ -155,7 +155,7 @@
         
         <p>E se não temos o sol todos os dias em nossa vida, temos uns aos outros como os girassóis! Tenho sorte de ter encontrado o <span class="highlight">meu girassol favorito</span> que me ilumina todos os dias... que é <span class="highlight">você</span>!</p>
         
-        <p id="countdown">O vídeo começará em 10 segundos...</p>
+        <p id="countdown">O vídeo começará em 25 segundos...</p>
     </div>
     
     <div id="video-container">
@@ -176,7 +176,7 @@
         const backButton = document.getElementById('back-button');
         
         // Configuração inicial
-        let seconds = 10;
+        let seconds = 25; // Alterado para 25 segundos
         
         // Contagem regressiva
         const countdownInterval = setInterval(() => {
@@ -188,7 +188,7 @@
             }
         }, 1000);
 
-        // Transição após 10 segundos
+        // Transição após 25 segundos (25000 milissegundos)
         setTimeout(() => {
             // Esconde o texto
             textContent.classList.add('hide-text');
@@ -201,7 +201,7 @@
             videoPlayer.play().catch(error => {
                 console.log("Reprodução automática bloqueada:", error);
             });
-        }, 10000);
+        }, 25000); // Alterado para 25 segundos (25000 ms)
 
         // Botão para voltar ao texto
         backButton.addEventListener('click', () => {
@@ -211,7 +211,7 @@
             backButton.classList.remove('show-back-button');
             
             // Reinicia a contagem
-            seconds = 10;
+            seconds = 25; // Reinicia com 25 segundos
             countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
         });
     </script>
