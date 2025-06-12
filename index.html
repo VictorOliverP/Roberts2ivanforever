@@ -22,6 +22,9 @@
             background-size: 30px 30px;
             background-position: 0 0, 15px 15px;
             overflow: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         .text-container {
@@ -176,8 +179,8 @@
     </div>
     
     <div id="video-container">
-        <!-- Certifique-se que o arquivo v.1.mp4 está na mesma pasta -->
-        <video id="video-player" playsinline webkit-playsinline>
+        <!-- Caminho corrigido para o vídeo -->
+        <video id="video-player" playsinline webkit-playsinline preload="auto">
             <source src="v.1.mp4" type="video/mp4">
             Seu navegador não suporta vídeos HTML5.
         </video>
@@ -198,28 +201,59 @@
         // Configuração inicial
         let seconds = 10;
         let isVideoPlaying = false;
-        
+        let countdownInterval;
+        let videoTransition;
+
         // Verifica se o vídeo está carregando corretamente
-        videoPlayer.addEventListener('error', function() {
-            console.error("Erro ao carregar o vídeo. Verifique:");
-            console.log("1. Se o arquivo v.1.mp4 está na mesma pasta");
-            console.log("2. Se o nome do arquivo está correto (incluindo a extensão .mp4)");
-            console.log("3. Se o vídeo tem um formato compatível (MP4 com H.264)");
-            alert("Erro ao carregar o vídeo. Verifique o console para detalhes.");
-        });
+        function checkVideo() {
+            return new Promise((resolve, reject) => {
+                // Verifica se o vídeo está acessível
+                fetch(videoPlayer.querySelector('source').src)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Arquivo de vídeo não encontrado (status ${response.status})`);
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        if (blob.size === 0) {
+                            throw new Error("Arquivo de vídeo vazio ou inválido");
+                        }
+                        resolve();
+                    })
+                    .catch(error => {
+                        console.error("Erro ao carregar o vídeo:", error.message);
+                        alert(`Erro: ${error.message}\n\nVerifique se o arquivo "v.1.mp4" está na mesma pasta do site.`);
+                        reject(error);
+                    });
+            });
+        }
+
+        // Inicialização
+        function init() {
+            checkVideo().then(() => {
+                startCountdown();
+            }).catch(() => {
+                // Para a execução se o vídeo não estiver disponível
+                countdownElement.textContent = "Erro ao carregar o vídeo";
+            });
+        }
 
         // Contagem regressiva
-        const countdownInterval = setInterval(() => {
-            seconds--;
-            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
-            
-            if (seconds <= 0) {
-                clearInterval(countdownInterval);
-            }
-        }, 1000);
+        function startCountdown() {
+            countdownInterval = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    startVideo();
+                }
+            }, 1000);
+        }
 
         // Função para iniciar vídeo
-        const startVideo = () => {
+        function startVideo() {
             // Esconde o texto
             textContent.classList.add('hide-text');
             
@@ -243,27 +277,12 @@
                     videoPlayer.controls = true;
                 });
             }
-        };
-
-        // Transição após 10 segundos
-        const videoTransition = setTimeout(startVideo, 10000);
+        }
 
         // Botão para voltar ao texto
         backButton.addEventListener('click', (e) => {
             e.stopPropagation();
-            videoPlayer.pause();
-            videoPlayer.currentTime = 0;
-            videoContainer.classList.remove('show-video');
-            textContent.classList.remove('hide-text');
-            backButton.classList.remove('show-back-button');
-            soundButton.style.display = 'none';
-            isVideoPlaying = false;
-            
-            // Reinicia a contagem
-            clearInterval(countdownInterval);
-            seconds = 10;
-            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
-            setTimeout(startVideo, 10000);
+            resetExperience();
         });
 
         // Controle de som
@@ -285,6 +304,31 @@
                 });
             }
         });
+
+        // Previne eventos de mouse desnecessários
+        document.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+        }, { passive: true });
+
+        // Reinicia a experiência
+        function resetExperience() {
+            videoPlayer.pause();
+            videoPlayer.currentTime = 0;
+            videoContainer.classList.remove('show-video');
+            textContent.classList.remove('hide-text');
+            backButton.classList.remove('show-back-button');
+            soundButton.style.display = 'none';
+            isVideoPlaying = false;
+            
+            // Reinicia a contagem
+            clearInterval(countdownInterval);
+            seconds = 10;
+            countdownElement.textContent = `O vídeo começará em ${seconds} segundos...`;
+            startCountdown();
+        }
+
+        // Inicia a aplicação
+        init();
     </script>
 </body>
 </html>
